@@ -1,0 +1,37 @@
+version: '3'
+services:
+  mariadb_hki:
+    # build: ./
+    #    restart: always
+    image: mariadb
+    ports:
+      - 5432:5432        
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    
+    volumes: 
+        - ./mariadb:/docker-entrypoint-initdb.d
+
+## optionally set nginx vars if you wish to frontend it with nginx
+    environment:
+     - VIRTUAL_HOST=gekko
+     - PORT=3000
+     - DOMAIN=gekko
+
+  redis:
+    image: redis:latest
+    volumes:
+      - ./volumes/redis:/data
+## optionally uncomment if you wish to use nginx as a frontend
+  nginx:
+    restart: always
+    image: jwilder/nginx-proxy
+    ports:
+     - "80:80"
+    volumes:
+     - /var/run/docker.sock:/tmp/docker.sock:ro
+
